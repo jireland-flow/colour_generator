@@ -367,7 +367,7 @@ function setActionColours(actionColour)
 		color: 'white',
 	});	
 
-	var actionCont = contrast(hexToRgb(colours['action-colour']), hexToRgb(colours['primary-dark']));
+	var actionCont = contrast(hexToRgb(colours['action-colour']), hexToRgb(colours['primary-colour']));
 	$('#action-colour-primarycontrast').html('<h4 class="centeredText">Primary contrast:<br>' + actionCont.toFixed(2) + '</h4>').css({
 		background: actionCont >= 1.4 ? 'green' : 'red',
 		color: 'white',
