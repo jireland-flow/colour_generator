@@ -42,7 +42,6 @@ for(var colour of names)
 
 	if(colour == 'primary-colour' || colour == "action-colour")
 	{
-
 		var func = 'updatePrimaryColour';
 		if(colour == 'action-colour')
 			func = 'updateActionColour';
@@ -69,6 +68,40 @@ for(var colour of names)
 			$(tr).append($(td));
 			td.innerHTML = '<div class="contrastBox" id="'+ colour +'-primarycontrast"><h4 class="centeredText">Primary contrast:<br> 0</h4></div>';
 		}
+	}
+
+	if(colour == "acrylic-dark" || colour == 'acrylic-light')
+	{
+
+		var func = 'updateAcrylicDark';
+		if(colour == 'acrylic-light')
+			func = 'updateAcrylicLight';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
+	}
+
+	if(colour == 'acrylic-dark')
+	{
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<div class="contrastBox" id="'+ colour +'-contrast"><h4 class="centeredText">White contrast:<br> 0</h4></div>';
+	}
+
+	if(colour == 'acrylic-light')
+	{
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<div class="contrastBox" id="'+ colour +'-contrast"><h4 class="centeredText">White contrast:<br> 0</h4></div>';
 	}
 }
 
@@ -158,47 +191,91 @@ function setColours(primaryColour)
 	document.getElementById(names[1] + '-display').value = colours['primary-dark'];
 	document.getElementById(names[1] + '-display').parentElement.colour = colours['primary-dark'];	
 
-	//set acrylic-dark
-	var acrylicDark = hexToRgb(colours['primary-colour']);
-	acrylicDark = RGBtoHSV(acrylicDark);
-	acrylicDark.s = 0.15;
-	acrylicDark.v = 0.4;
-	acrylicDark = HSVtoRGB(acrylicDark);
+	
+	setAcrylicDark();
+	setAcrylicLight();	
 
-	while(contrast(acrylicDark, white) < 3)
+	setActionColours();
+
+	colourTestItems();
+}
+
+function setAcrylicDark(dark)
+{
+	if(!dark)
 	{
+		//set acrylic-dark
+		var acrylicDark = hexToRgb(colours['primary-colour']);
 		acrylicDark = RGBtoHSV(acrylicDark);
-		acrylicDark.v -= 0.02;
+		acrylicDark.s = 0.15;
+		acrylicDark.v = 0.4;
 		acrylicDark = HSVtoRGB(acrylicDark);
-	}
 
-	colours['acrylic-dark'] = 'rgba('+ acrylicDark.r +', '+ acrylicDark.g +', '+ acrylicDark.b +', 0.8)';
+		while(contrast(acrylicDark, {r: 255, g: 255, b: 255}) < 3)
+		{
+			acrylicDark = RGBtoHSV(acrylicDark);
+			acrylicDark.v -= 0.02;
+			acrylicDark = HSVtoRGB(acrylicDark);
+		}
+
+		colours['acrylic-dark'] = 'rgba('+ acrylicDark.r +', '+ acrylicDark.g +', '+ acrylicDark.b +', 0.8)';
+		var cont = contrast(acrylicDark, {r: 255, g: 255, b: 255});
+	}
+	else
+	{
+		colours['acrylic-dark'] = 'rgba('+ dark.r +', '+ dark.g +', '+ dark.b +', 0.8)';
+		var cont = contrast(dark, {r: 255, g: 255, b: 255});
+	}
+	
+	$('#acrylic-dark-contrast').html('<h4 class="centeredText">White contrast:<br>' + cont.toFixed(2) + '</h4>').css({
+		background: cont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
+
 	$('#' + names[6] + '-display').css({background: colours['acrylic-dark']});
 	document.getElementById(names[6] + '-display').value = colours['acrylic-dark'];
 	document.getElementById(names[6] + '-display').parentElement.colour = colours['acrylic-dark'];
 
-	//set acrylic-light
-	var acrylicLight = hexToRgb(colours['primary-colour']);
-	acrylicLight = RGBtoHSV(acrylicLight);
-	acrylicLight.s = 0.1;
-	acrylicLight.v = 0.9;
-	acrylicLight = HSVtoRGB(acrylicLight);
+	colourTestItems();
+}
 
-	var primaryDark = hexToRgb(colours['primary-dark']);
-
-	while(contrast(acrylicLight, primaryDark) < 3)
+function setAcrylicLight(light)
+{
+	if(!light)
 	{
+		//set acrylic-light
+		var acrylicLight = hexToRgb(colours['primary-colour']);
 		acrylicLight = RGBtoHSV(acrylicLight);
-		acrylicLight.v += 0.02;
+		acrylicLight.s = 0.1;
+		acrylicLight.v = 0.9;
 		acrylicLight = HSVtoRGB(acrylicLight);
+
+		var primaryDark = hexToRgb(colours['primary-dark']);
+
+		while(contrast(acrylicLight, primaryDark) < 3)
+		{
+			acrylicLight = RGBtoHSV(acrylicLight);
+			acrylicLight.v += 0.02;
+			acrylicLight = HSVtoRGB(acrylicLight);
+		}	
+
+		colours['acrylic-light'] = 'rgba('+ acrylicLight.r +', '+ acrylicLight.g +', '+ acrylicLight.b +', 0.8)';
+		var cont = contrast(acrylicLight, hexToRgb(colours['primary-dark']));
+	}
+	else
+	{
+		colours['acrylic-light'] = 'rgba('+ light.r +', '+ light.g +', '+ light.b +', 0.8)';
+		var cont = contrast(light, hexToRgb(colours['primary-dark']));
 	}
 
-	colours['acrylic-light'] = 'rgba('+ acrylicLight.r +', '+ acrylicLight.g +', '+ acrylicLight.b +', 0.8)';
+	$('#acrylic-light-contrast').html('<h4 class="centeredText">Primary-dark contrast:<br>' + cont.toFixed(2) + '</h4>').css({
+		background: cont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
+
 	$('#' + names[5] + '-display').css({background: colours['acrylic-light'], color: colours['primary-dark']});
 	document.getElementById(names[5] + '-display').value = colours['acrylic-light'] ;
 	document.getElementById(names[5] + '-display').parentElement.colour = colours['acrylic-light'];
-
-	setActionColours();
 
 	colourTestItems();
 }
@@ -563,5 +640,28 @@ actionPasteColour.onchange = function(){
 	var col = /#?(\w+)/.exec(actionPasteColour.value)[1];
 	setActionColours('#' + col);	
 };
+
+
+function updateAcrylicDark()
+{
+	var newDark = {
+		h: document.getElementById('acrylic-dark-hue').value/360,
+		s: document.getElementById('acrylic-dark-saturation').value,
+		v: document.getElementById('acrylic-dark-lightness').value,
+	};
+	newDark = HSVtoRGB(newDark);
+	setAcrylicDark(newDark);
+}
+
+function updateAcrylicLight()
+{
+	var newLight = {
+		h: document.getElementById('acrylic-light-hue').value/360,
+		s: document.getElementById('acrylic-light-saturation').value,
+		v: document.getElementById('acrylic-light-lightness').value,
+	};
+	newLight = HSVtoRGB(newLight);
+	setAcrylicLight(newLight);
+}
 
 
