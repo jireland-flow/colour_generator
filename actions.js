@@ -48,15 +48,15 @@ for(var colour of names)
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" oninput="'+ func +'()" id="'+ colour +'-hue">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" oninput="'+ func +'()" id="'+ colour +'-saturation">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" oninput="'+ func +'()" id="'+ colour +'-lightness">';
 		
 		var td = document.createElement('td');
 		$(tr).append($(td));
@@ -79,15 +79,15 @@ for(var colour of names)
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" oninput="'+ func +'()" id="'+ colour +'-hue">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" oninput="'+ func +'()" id="'+ colour +'-saturation">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" oninput="'+ func +'()" id="'+ colour +'-lightness">';
 	}
 
 	if(colour == 'acrylic-dark')
