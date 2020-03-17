@@ -156,10 +156,7 @@ function setColours(primaryColour)
 	colours['primary-dark'] = rgbToHex(primaryDark);
 	$('#' + names[1] + '-display').css({background: colours['primary-dark']});
 	document.getElementById(names[1] + '-display').value = colours['primary-dark'];
-	document.getElementById(names[1] + '-display').parentElement.colour = colours['primary-dark'];
-
-
-	setActionColours();
+	document.getElementById(names[1] + '-display').parentElement.colour = colours['primary-dark'];	
 
 	//set acrylic-dark
 	var acrylicDark = hexToRgb(colours['primary-colour']);
@@ -200,6 +197,8 @@ function setColours(primaryColour)
 	$('#' + names[5] + '-display').css({background: colours['acrylic-light'], color: colours['primary-dark']});
 	document.getElementById(names[5] + '-display').value = colours['acrylic-light'] ;
 	document.getElementById(names[5] + '-display').parentElement.colour = colours['acrylic-light'];
+
+	setActionColours();
 
 	colourTestItems();
 }
@@ -252,8 +251,17 @@ function setActionColours(actionColour)
 		//check saturation
 		action.s = Math.max(action.s, 0.6);
 
+		//check contrast
+		var actionContrast = HSVtoRGB(action);
+		while(contrast(actionContrast, {r: 255, g: 255, b: 255}) < 3)
+		{
+			actionContrast = RGBtoHSV(actionContrast);
+			actionContrast.v -= 0.02;
+			actionContrast = HSVtoRGB(actionContrast);
+		}
+
 		//convert to rgb
-		var newAction = HSVtoRGB(action);
+		var newAction = actionContrast;
 		colours['action-colour'] = rgbToHex(newAction);
 	}
 	else
