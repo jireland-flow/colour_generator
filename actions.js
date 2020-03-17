@@ -7,8 +7,8 @@ var colours = {
 'action-colour': null,
 'action-colour-light': null,
 'action-colour-dark': null,
-'acrylic-dark': null,
 'acrylic-light': null,
+'acrylic-dark': null,
 };
 
 var mousePos = {x: 0, y: 0};
@@ -39,6 +39,26 @@ for(var colour of names)
 	$(tr).append($(td));
 	td.colour = col;
 	td.innerHTML = '<button type="button" class="copyButton" onclick="copyContent(this)">copy</button>';
+
+	if(colour == 'primary-colour' || colour == "action-colour")
+	{
+
+		var func = 'updatePrimaryColour';
+		if(colour == 'action-colour')
+			func = 'updateActionColour';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
+	}
 }
 
 function copyContent(e, event)
@@ -67,28 +87,48 @@ function copyContent(e, event)
 }
 
 var input = document.getElementById('input');
-var baseColour = input.value;
-input.onchange = function(){
+input.onchange = function(){setColours()};
 
-	baseColour = /#?(\w+)/.exec(input.value)[1];
-	baseColour = hexToRgb(baseColour);
-	var white = {r: 255, g: 255, b: 255};	
 
-	while(contrast(baseColour, white) < 3)
+function setColours(primaryColour)
+{	
+	var white = {r: 255, g: 255, b: 255};
+
+	if(!primaryColour)
 	{
-		baseColour = RGBtoHSV(baseColour);
-		if(baseColour.s < 0.6)		
-			baseColour.s += 0.02;
-		else
-			baseColour.v -= 0.02;
-		baseColour = HSVtoRGB(baseColour);
+		var baseColour = input.value;
+		baseColour = /#?(\w+)/.exec(input.value)[1];
+		baseColour = hexToRgb(baseColour);		
+
+		while(contrast(baseColour, white) < 3)
+		{
+			baseColour = RGBtoHSV(baseColour);
+			if(baseColour.s < 0.6)		
+				baseColour.s += 0.02;
+			else
+				baseColour.v -= 0.02;
+			baseColour = HSVtoRGB(baseColour);
+		}
+
+		//set primary colour
+		colours['primary-colour'] = rgbToHex(baseColour);
+	}	
+	else
+	{
+		colours['primary-colour'] = primaryColour;
 	}
 
-	//set primary colour
-	colours['primary-colour'] = rgbToHex(baseColour);	
 	$('#' + names[0] + '-display').css({background: colours['primary-colour']});
 	document.getElementById(names[0] + '-display').innerHTML = '<p class="centeredText">'+ colours['primary-colour'] +'</p>';
 	document.getElementById(names[0] + '-display').parentElement.colour = colours['primary-colour'];
+
+	var tmp = hexToRgb(colours['primary-colour']);
+	tmp = RGBtoHSV(tmp);
+
+	document.getElementById('primary-colour-hue').value = Math.round(tmp.h * 360);
+	document.getElementById('primary-colour-saturation').value = tmp.s;
+	document.getElementById('primary-colour-lightness').value = tmp.v;
+	
 
 	//set primary dark
 	var primaryDark = hexToRgb(colours['primary-colour']);
@@ -102,87 +142,7 @@ input.onchange = function(){
 	document.getElementById(names[1] + '-display').parentElement.colour = colours['primary-dark'];
 
 
-	//get action colour
-	var action = hexToRgb(colours['primary-colour']);
-	action = RGBtoHSV(action);
-	var h = Math.round(action.h * 360);
-	var oppH = h - 180;
-	if(oppH < 0)
-	{
-		oppH = 360 + oppH;
-	}
-
-	console.log(oppH);
-	//move 25 degrees towards 180 or 0
-	var quad = Math.floor(oppH/90);
-
-
-	if(oppH != 180 && oppH != 90)
-	{
-		switch(quad)
-		{
-			case 0: oppH -= 25;
-			break;
-			case 1: oppH += 25;
-			break;
-			case 2: oppH -= 25;
-			break;
-			case 3: oppH += 25;
-			break;
-		}
-	}
-
-	if(oppH > 360)
-		oppH = 360 - oppH;
-	else if(oppH < 0)
-		oppH = 360 + oppH;
-
-	//convert back to HSV
-	oppH = oppH/360;
-	action.h = oppH;
-
-	//check brightness
-	if(action.v >= .9)	
-		action.v *= 0.92;	
-
-	//check saturation
-	action.s = Math.max(action.s, 0.6);
-
-	//convert to rgb
-	var newAction = HSVtoRGB(action);
-
-	colours['action-colour'] = rgbToHex(newAction);
-	$('#' + names[2] + '-display').css({background: colours['action-colour']});
-	document.getElementById(names[2] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour'] +'</p>';
-	document.getElementById(names[2] + '-display').parentElement.colour = colours['action-colour'];
-
-
-	//set action colour light
-	var tmp = {h: action.h, s: action.s, v: action.v};
-	tmp.v *= 1 + actionColourOffset;
-	if(tmp.v > 1)
-		tmp.v = 1;
-
-	tmp = HSVtoRGB(tmp);
-
-	colours['action-colour-light'] = rgbToHex(tmp);
-	$('#' + names[3] + '-display').css({background: colours['action-colour-light']});
-	document.getElementById(names[3] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-light'] +'</p>';
-	document.getElementById(names[3] + '-display').parentElement.colour = colours['action-colour-light'];
-
-	//set action colour dark
-	var tmp = {h: action.h, s: action.s, v: action.v};
-	tmp.v *= 1 - actionColourOffset;
-	if(tmp.v < 0)
-		tmp.v = 0;
-
-	tmp = HSVtoRGB(tmp);
-
-	colours['action-colour-dark'] = rgbToHex(tmp);
-	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
-	document.getElementById(names[4] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-dark'] +'</p>';
-	document.getElementById(names[4] + '-display').parentElement.colour = colours['action-colour-dark'];
-
+	setActionColours();
 
 	//set acrylic-dark
 	var acrylicDark = hexToRgb(colours['primary-colour']);
@@ -199,15 +159,15 @@ input.onchange = function(){
 	}
 
 	colours['acrylic-dark'] = 'rgba('+ acrylicDark.r +', '+ acrylicDark.g +', '+ acrylicDark.b +', 0.8)';
-	$('#' + names[5] + '-display').css({background: colours['acrylic-dark']});
-	document.getElementById(names[5] + '-display').innerHTML = '<p class="centeredText">'+ colours['acrylic-dark'] +'</p>';
-	document.getElementById(names[5] + '-display').parentElement.colour = colours['acrylic-dark'];
+	$('#' + names[6] + '-display').css({background: colours['acrylic-dark']});
+	document.getElementById(names[6] + '-display').innerHTML = '<p class="centeredText">'+ colours['acrylic-dark'] +'</p>';
+	document.getElementById(names[6] + '-display').parentElement.colour = colours['acrylic-dark'];
 
 	//set acrylic-light
 	var acrylicLight = hexToRgb(colours['primary-colour']);
 	acrylicLight = RGBtoHSV(acrylicLight);
-	acrylicLight.s = 0.15;
-	acrylicLight.v = 0.4;
+	acrylicLight.s = 0.1;
+	acrylicLight.v = 0.9;
 	acrylicLight = HSVtoRGB(acrylicLight);
 
 	var primaryDark = hexToRgb(colours['primary-dark']);
@@ -220,10 +180,160 @@ input.onchange = function(){
 	}
 
 	colours['acrylic-light'] = 'rgba('+ acrylicLight.r +', '+ acrylicLight.g +', '+ acrylicLight.b +', 0.8)';
-	$('#' + names[6] + '-display').css({background: colours['acrylic-light']});
-	document.getElementById(names[6] + '-display').innerHTML = '<p class="centeredText" style="color: '+ colours['primary-dark'] +'">'+ colours['acrylic-light'] +'</p>';
-	document.getElementById(names[6] + '-display').parentElement.colour = colours['acrylic-light'];
-};
+	$('#' + names[5] + '-display').css({background: colours['acrylic-light']});
+	document.getElementById(names[5] + '-display').innerHTML = '<p class="centeredText" style="color: '+ colours['primary-dark'] +'">'+ colours['acrylic-light'] +'</p>';
+	document.getElementById(names[5] + '-display').parentElement.colour = colours['acrylic-light'];
+}
+
+function setActionColours(actionColour)
+{
+	if(!actionColour)
+	{
+		//get action colour
+		var action = hexToRgb(colours['primary-colour']);
+		action = RGBtoHSV(action);
+		var h = Math.round(action.h * 360);
+		var oppH = h - 180;
+
+		if(oppH < 0)	
+			oppH = 360 + oppH;	
+
+		//move 25 degrees towards 180 or 0
+		var quad = Math.floor(oppH/90);
+
+
+		if(oppH != 180 && oppH != 90)
+		{
+			switch(quad)
+			{
+				case 0: oppH -= 25;
+				break;
+				case 1: oppH += 25;
+				break;
+				case 2: oppH -= 25;
+				break;
+				case 3: oppH += 25;
+				break;
+			}
+		}
+
+		if(oppH > 360)
+			oppH = 360 - oppH;
+		else if(oppH < 0)
+			oppH = 360 + oppH;
+
+		//convert back to HSV
+		oppH = oppH/360;
+		action.h = oppH;
+
+		//check brightness
+		if(action.v >= .9)	
+			action.v *= 0.92;	
+
+		//check saturation
+		action.s = Math.max(action.s, 0.6);
+
+		//convert to rgb
+		var newAction = HSVtoRGB(action);
+		colours['action-colour'] = rgbToHex(newAction);
+	}
+	else
+	{
+		colours['action-colour'] = actionColour;		
+	}
+
+	var rgb = hexToRgb(colours['action-colour'])
+	if(contrast(rgb, {r: 255, g: 255, b: 255}) < 3)
+	{
+		var hsv = RGBtoHSV(rgb);
+		if(hsv.s > 0.5)
+		{
+			hsv.s -= 0.02;
+			var tmp = HSVtoRGB(hsv);
+			tmp = rgbToHex(tmp);
+			colours['action-colour'] = tmp;
+			setActionColours();
+		}
+		else 
+		{
+			hsv.v -= 0.02;
+			var tmp = HSVtoRGB(hsv);
+			tmp = rgbToHex(tmp);
+			colours['action-colour'] = tmp;
+			setActionColours();
+		}
+	}
+
+	if(contrast(rgb, hexToRgb(colours['primary-colour'])) < 1.4)
+	{
+		var hsv = RGBtoHSV(rgb);
+		hsv.v -= 0.02;
+		var tmp = HSVtoRGB(hsv);
+		tmp = rgbToHex(tmp);
+		colours['action-colour'] = tmp;
+		setActionColours();
+	}
+
+	$('#' + names[2] + '-display').css({background: colours['action-colour']});
+	document.getElementById(names[2] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour'] +'</p>';
+	document.getElementById(names[2] + '-display').parentElement.colour = colours['action-colour'];
+
+	var vals = hexToRgb(colours['action-colour']);
+	vals = RGBtoHSV(vals);
+	document.getElementById('action-colour-hue').value = Math.round(vals.h * 360);
+	document.getElementById('action-colour-saturation').value = vals.s;
+	document.getElementById('action-colour-lightness').value = vals.v;
+
+	//set action colour light
+	var tmp = {h: vals.h, s: vals.s, v: vals.v};
+	tmp.v *= 1 + actionColourOffset;
+	if(tmp.v > 1)
+		tmp.v = 1;
+
+	tmp = HSVtoRGB(tmp);
+
+	colours['action-colour-light'] = rgbToHex(tmp);
+	$('#' + names[3] + '-display').css({background: colours['action-colour-light']});
+	document.getElementById(names[3] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-light'] +'</p>';
+	document.getElementById(names[3] + '-display').parentElement.colour = colours['action-colour-light'];
+
+	//set action colour dark
+	var tmp = {h: vals.h, s: vals.s, v: vals.v};
+	tmp.v *= 1 - actionColourOffset;
+	if(tmp.v < 0)
+		tmp.v = 0;
+
+	tmp = HSVtoRGB(tmp);
+
+	colours['action-colour-dark'] = rgbToHex(tmp);
+	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
+	document.getElementById(names[4] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-dark'] +'</p>';
+	document.getElementById(names[4] + '-display').parentElement.colour = colours['action-colour-dark'];
+}
+
+function updatePrimaryColour()
+{
+	var newPrimary = {
+		h: document.getElementById('primary-colour-hue').value/360,
+		s: document.getElementById('primary-colour-saturation').value,
+		v: document.getElementById('primary-colour-lightness').value,
+	};
+	newPrimary = HSVtoRGB(newPrimary);
+	newPrimary = rgbToHex(newPrimary);
+	setColours(newPrimary);
+}
+
+function updateActionColour()
+{
+	var newAction = {
+		h: document.getElementById('action-colour-hue').value/360,
+		s: document.getElementById('action-colour-saturation').value,
+		v: document.getElementById('action-colour-lightness').value,
+	};
+	newAction = HSVtoRGB(newAction);
+	newAction = rgbToHex(newAction);
+	setActionColours(newAction);
+}
 
 function luminanace(colour) {
 
