@@ -1,3 +1,6 @@
+
+var actionColourOffset = 0.13; //percent
+
 var colours = {
 'primary-colour': null,
 'primary-dark': null,
@@ -109,11 +112,33 @@ input.onchange = function(){
 		oppH = 360 + oppH;
 	}
 
-	//move 25 degrees towards 180 or 0
 	console.log(oppH);
+	//move 25 degrees towards 180 or 0
+	var quad = Math.floor(oppH/90);
+
+
+	if(oppH != 180 && oppH != 90)
+	{
+		switch(quad)
+		{
+			case 0: oppH -= 25;
+			break;
+			case 1: oppH += 25;
+			break;
+			case 2: oppH -= 25;
+			break;
+			case 3: oppH += 25;
+			break;
+		}
+	}
+
+	if(oppH > 360)
+		oppH = 360 - oppH;
+	else if(oppH < 0)
+		oppH = 360 + oppH;
 
 	//convert back to HSV
-	oppH = Math.round(oppH/360);
+	oppH = oppH/360;
 	action.h = oppH;
 
 	//check brightness
@@ -134,7 +159,10 @@ input.onchange = function(){
 
 	//set action colour light
 	var tmp = {h: action.h, s: action.s, v: action.v};
-	tmp.v *= 1.13;
+	tmp.v *= 1 + actionColourOffset;
+	if(tmp.v > 1)
+		tmp.v = 1;
+
 	tmp = HSVtoRGB(tmp);
 
 	colours['action-colour-light'] = rgbToHex(tmp);
@@ -144,7 +172,10 @@ input.onchange = function(){
 
 	//set action colour dark
 	var tmp = {h: action.h, s: action.s, v: action.v};
-	tmp.v *= 0.87;
+	tmp.v *= 1 - actionColourOffset;
+	if(tmp.v < 0)
+		tmp.v = 0;
+
 	tmp = HSVtoRGB(tmp);
 
 	colours['action-colour-dark'] = rgbToHex(tmp);
