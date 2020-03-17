@@ -68,3 +68,19 @@
 #rightBottomPanel h1, #rightBottomPanel p {
     color: white;
 }
+
+.contrastBox {
+    background: red;
+    width: 100%;
+    height: 100%;
+}
+
+input[type="text"] {
+    color: white;
+    text-align: center;
+}
+
+#input {
+    color: black;
+    text-align: left;
+}
