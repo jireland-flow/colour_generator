@@ -220,12 +220,18 @@ function setAcrylicDark(dark)
 
 		colours['acrylic-dark'] = 'rgba('+ acrylicDark.r +', '+ acrylicDark.g +', '+ acrylicDark.b +', 0.8)';
 		var cont = contrast(acrylicDark, {r: 255, g: 255, b: 255});
+		var tmp = RGBtoHSV(acrylicDark);
 	}
 	else
 	{
 		colours['acrylic-dark'] = 'rgba('+ dark.r +', '+ dark.g +', '+ dark.b +', 0.8)';
 		var cont = contrast(dark, {r: 255, g: 255, b: 255});
+		var tmp = RGBtoHSV(dark);
 	}
+
+	document.getElementById('acrylic-dark-hue').value = Math.round(tmp.h * 360);
+	document.getElementById('acrylic-dark-saturation').value = tmp.s;
+	document.getElementById('acrylic-dark-lightness').value = tmp.v;
 	
 	$('#acrylic-dark-contrast').html('<h4 class="centeredText">White contrast:<br>' + cont.toFixed(2) + '</h4>').css({
 		background: cont >= 3 ? 'green' : 'red',
@@ -259,14 +265,22 @@ function setAcrylicLight(light)
 			acrylicLight = HSVtoRGB(acrylicLight);
 		}	
 
+
+
 		colours['acrylic-light'] = 'rgba('+ acrylicLight.r +', '+ acrylicLight.g +', '+ acrylicLight.b +', 0.8)';
 		var cont = contrast(acrylicLight, hexToRgb(colours['primary-dark']));
+		var tmp = RGBtoHSV(acrylicLight);
 	}
 	else
 	{
 		colours['acrylic-light'] = 'rgba('+ light.r +', '+ light.g +', '+ light.b +', 0.8)';
 		var cont = contrast(light, hexToRgb(colours['primary-dark']));
+		var tmp = RGBtoHSV(light);
 	}
+
+	document.getElementById('acrylic-light-hue').value = Math.round(tmp.h * 360);
+	document.getElementById('acrylic-light-saturation').value = tmp.s;
+	document.getElementById('acrylic-light-lightness').value = tmp.v;
 
 	$('#acrylic-light-contrast').html('<h4 class="centeredText">Primary-dark contrast:<br>' + cont.toFixed(2) + '</h4>').css({
 		background: cont >= 3 ? 'green' : 'red',
