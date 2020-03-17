@@ -345,7 +345,8 @@ function setActionColours(actionColour)
 	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
 	document.getElementById(names[4] + '-display').value = colours['action-colour-dark'];
 	document.getElementById(names[4] + '-display').parentElement.colour = colours['action-colour-dark'];
-	
+
+	colourTestItems();	
 }
 
 function updatePrimaryColour()
@@ -475,6 +476,9 @@ function RGBtoHSV(r, g, b) {
 
 function colourTestItems()
 {
+
+	document.getElementById('leftPanel').innerHTML = '';
+
 	$('#leftPanel, #rightBottomPanel').css({
 		background: colours['acrylic-dark'],
 		'border-color': colours['primary-colour'],
@@ -501,6 +505,7 @@ function colourTestItems()
 	{type: 'p', colour: colours['action-colour']},
 	];
 
+	var actionBoxes = [];
 	//generate boxes
 	for(var y = 0; y < 4; y++)
 	{
@@ -518,23 +523,21 @@ function colourTestItems()
 
 			if(x + y * 2 >= 4)
 			{
-				$(tmp).addClass('actionBox');
+				actionBoxes.push(tmp);
+				$(tmp).addClass('actionBox').css({cursor: 'pointer'});
 			}
 		}
 	}
 
-		var sel = document.querySelectorAll('.actionBox');
-		for(var selection of sel)
-		{
-			console.log(selection);
-			$(selection).on('mouseover', function(){
-				$(selection).css({background: colours['action-colour-light']});
+		actionBoxes.forEach(function(content, index){
+			$(content).on('mouseover', function(){
+				$(content).css({background: colours['action-colour-light']});
 			}).on('mouseout', function(){
-				$(selection).css({background: colours['action-colour']});
+				$(content).css({background: colours['action-colour']});
 			}).on('click', function(){
-				$(selection).css({background: colours['action-colour-dark']});
+				$(content).css({background: colours['action-colour-dark']});
 			});
-		}
+		});
 }
 
 $(window).on('resize load', function(){
