@@ -49,15 +49,15 @@ for(var colour of names)
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Hue</span><br><input type="range" min="0" max="360" value="180" step="1" class="slider" onchange="'+ func +'()" id="'+ colour +'-hue">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Saturation</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-saturation">';
 
 		var td = document.createElement('td');
 		$(tr).append($(td));
-		td.innerHTML = '<input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" onchange="'+ func +'()" id="'+ colour +'-lightness">';
 	}
 }
 
@@ -119,7 +119,7 @@ function setColours(primaryColour)
 	}
 
 	$('#' + names[0] + '-display').css({background: colours['primary-colour']});
-	document.getElementById(names[0] + '-display').innerHTML = '<p class="centeredText">'+ colours['primary-colour'] +'</p>';
+	document.getElementById(names[0] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['primary-colour'] +'</p>';
 	document.getElementById(names[0] + '-display').parentElement.colour = colours['primary-colour'];
 
 	var tmp = hexToRgb(colours['primary-colour']);
@@ -138,7 +138,7 @@ function setColours(primaryColour)
 
 	colours['primary-dark'] = rgbToHex(primaryDark);
 	$('#' + names[1] + '-display').css({background: colours['primary-dark']});
-	document.getElementById(names[1] + '-display').innerHTML = '<p class="centeredText">'+ colours['primary-dark'] +'</p>';
+	document.getElementById(names[1] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['primary-dark'] +'</p>';
 	document.getElementById(names[1] + '-display').parentElement.colour = colours['primary-dark'];
 
 
@@ -160,7 +160,7 @@ function setColours(primaryColour)
 
 	colours['acrylic-dark'] = 'rgba('+ acrylicDark.r +', '+ acrylicDark.g +', '+ acrylicDark.b +', 0.8)';
 	$('#' + names[6] + '-display').css({background: colours['acrylic-dark']});
-	document.getElementById(names[6] + '-display').innerHTML = '<p class="centeredText">'+ colours['acrylic-dark'] +'</p>';
+	document.getElementById(names[6] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['acrylic-dark'] +'</p>';
 	document.getElementById(names[6] + '-display').parentElement.colour = colours['acrylic-dark'];
 
 	//set acrylic-light
@@ -181,8 +181,10 @@ function setColours(primaryColour)
 
 	colours['acrylic-light'] = 'rgba('+ acrylicLight.r +', '+ acrylicLight.g +', '+ acrylicLight.b +', 0.8)';
 	$('#' + names[5] + '-display').css({background: colours['acrylic-light']});
-	document.getElementById(names[5] + '-display').innerHTML = '<p class="centeredText" style="color: '+ colours['primary-dark'] +'">'+ colours['acrylic-light'] +'</p>';
+	document.getElementById(names[5] + '-display').innerHTML = '<p class="centeredText colourHex" style="color: '+ colours['primary-dark'] +'">'+ colours['acrylic-light'] +'</p>';
 	document.getElementById(names[5] + '-display').parentElement.colour = colours['acrylic-light'];
+
+	colourTestItems();
 }
 
 function setActionColours(actionColour)
@@ -243,8 +245,10 @@ function setActionColours(actionColour)
 	}
 
 	var rgb = hexToRgb(colours['action-colour'])
+	
 	if(contrast(rgb, {r: 255, g: 255, b: 255}) < 3)
 	{
+		/*
 		var hsv = RGBtoHSV(rgb);
 		if(hsv.s > 0.5)
 		{
@@ -261,21 +265,22 @@ function setActionColours(actionColour)
 			tmp = rgbToHex(tmp);
 			colours['action-colour'] = tmp;
 			setActionColours();
-		}
+		}*/
 	}
 
 	if(contrast(rgb, hexToRgb(colours['primary-colour'])) < 1.4)
 	{
+		/*
 		var hsv = RGBtoHSV(rgb);
 		hsv.v -= 0.02;
 		var tmp = HSVtoRGB(hsv);
 		tmp = rgbToHex(tmp);
 		colours['action-colour'] = tmp;
-		setActionColours();
+		setActionColours();*/
 	}
 
 	$('#' + names[2] + '-display').css({background: colours['action-colour']});
-	document.getElementById(names[2] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour'] +'</p>';
+	document.getElementById(names[2] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['action-colour'] +'</p>';
 	document.getElementById(names[2] + '-display').parentElement.colour = colours['action-colour'];
 
 	var vals = hexToRgb(colours['action-colour']);
@@ -294,7 +299,7 @@ function setActionColours(actionColour)
 
 	colours['action-colour-light'] = rgbToHex(tmp);
 	$('#' + names[3] + '-display').css({background: colours['action-colour-light']});
-	document.getElementById(names[3] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-light'] +'</p>';
+	document.getElementById(names[3] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['action-colour-light'] +'</p>';
 	document.getElementById(names[3] + '-display').parentElement.colour = colours['action-colour-light'];
 
 	//set action colour dark
@@ -307,8 +312,9 @@ function setActionColours(actionColour)
 
 	colours['action-colour-dark'] = rgbToHex(tmp);
 	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
-	document.getElementById(names[4] + '-display').innerHTML = '<p class="centeredText">'+ colours['action-colour-dark'] +'</p>';
+	document.getElementById(names[4] + '-display').innerHTML = '<p class="centeredText colourHex">'+ colours['action-colour-dark'] +'</p>';
 	document.getElementById(names[4] + '-display').parentElement.colour = colours['action-colour-dark'];
+	
 }
 
 function updatePrimaryColour()
@@ -436,7 +442,78 @@ function RGBtoHSV(r, g, b) {
     };
 }
 
-function radsToDegs(rads)
+function colourTestItems()
 {
-	return rads * (180/Math.PI);
+	$('#leftPanel, #rightBottomPanel').css({
+		background: colours['acrylic-dark'],
+		'border-color': colours['primary-colour'],
+	});
+
+	$('#rightTopPanel h1, #rightTopPanel p').css({
+		color: colours['primary-dark'],
+	});
+
+	$('#rightTopPanel').css({
+		background: colours['acrylic-light'],
+		'border-color': colours['primary-colour'],
+	});
+
+	var combinations = [
+	{type: 'h1', colour: colours['primary-colour']},
+	{type: 'h2', colour: colours['primary-colour']},
+	{type: 'h3', colour: colours['primary-colour']},
+	{type: 'p', colour: colours['primary-colour']},
+
+	{type: 'h1', colour: colours['action-colour']},
+	{type: 'h2', colour: colours['action-colour']},
+	{type: 'h3', colour: colours['action-colour']},
+	{type: 'p', colour: colours['action-colour']},
+	];
+
+	//generate boxes
+	for(var y = 0; y < 4; y++)
+	{
+		for(var x = 0; x < 2; x++)
+		{
+			var tmp = document.createElement('div');
+			tmp.innerHTML = '<' + combinations[x + y * 2].type + ' class="centeredText">Legibility test ' + combinations[x + y * 2].type + '</'+ combinations[x + y * 2].type +'>';
+			$(tmp).css({
+				position: 'absolute',
+				left: 50 + (x * 180), top: 25 + (y * 120),
+				width: 160, height: 100,
+				background: combinations[x + y * 2].colour,
+			});
+			$('#leftPanel').append($(tmp));
+
+			if(x + y * 2 >= 4)
+			{
+				$(tmp).addClass('actionBox');
+			}
+		}
+	}
+
+		var sel = document.querySelectorAll('.actionBox');
+		for(var selection of sel)
+		{
+			console.log(selection);
+			$(selection).on('mouseover', function(){
+				$(selection).css({background: colours['action-colour-light']});
+			}).on('mouseout', function(){
+				$(selection).css({background: colours['action-colour']});
+			}).on('click', function(){
+				$(selection).css({background: colours['action-colour-dark']});
+			});
+		}
 }
+
+$(window).on('resize load', function(){
+
+	var scale = $(window).width()/1920;
+
+	$('#Stage').css({
+		'transform-origin': '0% 0%',
+		transform: 'scale('+ scale +')',
+	});
+});
+
+
