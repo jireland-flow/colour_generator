@@ -1,0 +1,18 @@
+.colourDisplay {
+	height: 20px;
+	margin-left: 1em;
+	border: 1px solid black;
+}
+
+.centeredText {
+	position: relative;
+    left: 5%;
+    top: 50%;
+    width: 90%;
+    transform: translate(0, -50%);
+    height: auto;
+    color: white;
+    padding: 0;
+    margin: 0;
+    font-size: 0.8em;
+}
