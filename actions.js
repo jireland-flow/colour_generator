@@ -103,6 +103,22 @@ for(var colour of names)
 		$(tr).append($(td));
 		td.innerHTML = '<div class="contrastBox" id="'+ colour +'-contrast"><h4 class="centeredText">White contrast:<br> 0</h4></div>';
 	}
+
+	if(colour == 'action-colour-light' || colour == 'action-colour-dark')
+	{
+		var func = 'updateActionLight';
+		if(colour == 'action-colour-dark')
+			func = 'updateActionDark';		
+
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<span style="text-transform: uppercase; font-size: 0.6em; font-weight: 900;">Brightness</span><br><input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" oninput="'+ func +'()" id="'+ colour +'-lightness">';
+	
+		var td = document.createElement('td');
+		$(tr).append($(td));
+		td.innerHTML = '<div class="contrastBox" id="'+ colour +'-contrast"><h4 class="centeredText">White contrast:<br> 0</h4></div>';
+	
+	}
 }
 
 function copyContent(e, event)
@@ -425,7 +441,15 @@ function setActionColours(actionColour)
 	if(tmp.v > 1)
 		tmp.v = 1;
 
+	document.getElementById('action-colour-light-lightness').value = tmp.v;
+
 	tmp = HSVtoRGB(tmp);
+
+	var actionLightCont = contrast(tmp, {r: 255, g: 255, b: 255});
+	$('#action-colour-light-contrast').html('<h4 class="centeredText">White contrast:<br>' + actionLightCont.toFixed(2) + '</h4>').css({
+		background: actionLightCont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
 
 	colours['action-colour-light'] = rgbToHex(tmp);
 	$('#' + names[3] + '-display').css({background: colours['action-colour-light']});
@@ -438,7 +462,15 @@ function setActionColours(actionColour)
 	if(tmp.v < 0)
 		tmp.v = 0;
 
+	document.getElementById('action-colour-dark-lightness').value = tmp.v;
+
 	tmp = HSVtoRGB(tmp);
+
+	var actionDarkCont = contrast(tmp, {r: 255, g: 255, b: 255});
+	$('#action-colour-dark-contrast').html('<h4 class="centeredText">White contrast:<br>' + actionDarkCont.toFixed(2) + '</h4>').css({
+		background: actionDarkCont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
 
 	colours['action-colour-dark'] = rgbToHex(tmp);
 	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
@@ -676,6 +708,46 @@ function updateAcrylicLight()
 	};
 	newLight = HSVtoRGB(newLight);
 	setAcrylicLight(newLight);
+}
+
+function updateActionLight()
+{
+	var newLight = hexToRgb(colours['action-colour-light']);
+	newLight = RGBtoHSV(newLight);
+	newLight.v = document.getElementById('action-colour-light-lightness').value;
+	newLight = HSVtoRGB(newLight);
+
+	var actionLightCont = contrast(newLight, {r: 255, g: 255, b: 255});
+	$('#action-colour-light-contrast').html('<h4 class="centeredText">White contrast:<br>' + actionLightCont.toFixed(2) + '</h4>').css({
+		background: actionLightCont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
+	
+	colours['action-colour-light'] = rgbToHex(newLight);
+	$('#' + names[3] + '-display').css({background: colours['action-colour-light']});
+	document.getElementById(names[3] + '-display').value = colours['action-colour-light'];
+	document.getElementById(names[3] + '-display').parentElement.colour = colours['action-colour-light'];
+	colourTestItems();
+}
+
+function updateActionDark()
+{
+	var newDark = hexToRgb(colours['action-colour-dark']);
+	newDark = RGBtoHSV(newDark);
+	newDark.v = document.getElementById('action-colour-dark-lightness').value;
+	newDark = HSVtoRGB(newDark);
+
+	var actionDarkCont = contrast(newDark, {r: 255, g: 255, b: 255});
+	$('#action-colour-dark-contrast').html('<h4 class="centeredText">White contrast:<br>' + actionDarkCont.toFixed(2) + '</h4>').css({
+		background: actionDarkCont >= 3 ? 'green' : 'red',
+		color: 'white',
+	});	
+
+	colours['action-colour-dark'] = rgbToHex(newDark);
+	$('#' + names[4] + '-display').css({background: colours['action-colour-dark']});
+	document.getElementById(names[4] + '-display').value = colours['action-colour-dark'];
+	document.getElementById(names[4] + '-display').parentElement.colour = colours['action-colour-dark'];
+	colourTestItems();
 }
 
 
